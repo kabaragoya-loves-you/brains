@@ -31,11 +31,8 @@ async function build() {
 `
   );
 
-  fs.writeFileSync(
-    path.join(outDir, "_redirects"),
-    `/*    /index.html   200
-`
-  );
+  // SPA fallback is configured in wrangler.toml (not_found_handling).
+  // A Pages-style /* → /index.html _redirects file triggers Workers error 100324.
 
   console.log(`Web build → ${outDir}`);
 
