@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; img-src 'self' data: blob:; connect-src 'self' https://*.googleapis.com https://*.gstatic.com https://*.firebaseio.com wss://*.firebaseio.com https://*.cloudfunctions.net https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://*.firebaseapp.com"
+  />
+  <title>Brains!</title>
+  <link rel="icon" type="image/png" href="./kabaragoya.png" />
+  <link rel="stylesheet" href="./vendor/uPlot.min.css" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <h1>
+        A visualizer for the
+        <a href="https://neurosity.co" target="_blank" rel="noopener noreferrer">Neurosity Crown</a>
+        by
+        <a href="https://kabaragoya.com" target="_blank" rel="noopener noreferrer">Kabaragoya</a>
+      </h1>
+      <div class="status-block">
+        <p id="statusLine1" class="status-line">Signed out</p>
+        <p id="statusLine2" class="status-line status-line-2"></p>
+      </div>
+    </div>
+    <div class="top-actions">
+      <div id="modeSwitch" class="mode-switch" hidden>
+        <button type="button" data-mode="timeline" class="mode-btn">Timeline</button>
+        <button type="button" data-mode="head" class="mode-btn">Head</button>
+        <button type="button" data-mode="fireflies" class="mode-btn">Fireflies</button>
+        <button type="button" data-mode="rings" class="mode-btn">Rings</button>
+        <button type="button" data-mode="attractors" class="mode-btn">Attractors</button>
+        <button type="button" data-mode="storm" class="mode-btn">Storm</button>
+        <button type="button" data-mode="aurora" class="mode-btn">Aurora</button>
+        <button type="button" data-mode="crystal" class="mode-btn">Crystal</button>
+        <button type="button" data-mode="weather" class="mode-btn">Weather</button>
+      </div>
+      <div class="options-row">
+        <label class="pause-toggle" title="Stream synthetic Crown metrics into Timeline and every viz">
+          <input type="checkbox" id="demoToggle" />
+          Demo
+        </label>
+        <label class="pause-toggle">
+          <input type="checkbox" id="audioToggle" />
+          Audio
+        </label>
+        <label class="pause-toggle">
+          <input type="checkbox" id="pauseToggle" />
+          Pause
+        </label>
+        <div id="clockBar" class="clock-bar" hidden>
+          <button type="button" id="clockNowBtn" class="ghost clock-now">Now</button>
+          <input type="range" id="clockSlider" min="0" max="1439" step="1" />
+          <span id="clockLabel" class="clock-label">12:00 AM</span>
+        </div>
+        <button type="button" id="fullscreenBtn" class="ghost">Full screen</button>
+        <button type="button" id="logoutBtn" class="ghost" hidden>Log out</button>
+      </div>
+    </div>
+  </header>
+
+  <div id="fsExitWrap" class="fs-exit-wrap" hidden>
+    <div class="fs-exit-hotzone" aria-hidden="true"></div>
+    <button type="button" id="fsExitBtn" class="fs-exit" title="Exit full screen" aria-label="Exit full screen">×</button>
+  </div>
+
+  <section id="loginView" class="panel login-panel">
+    <h2>Sign in</h2>
+    <p class="hint">
+      Use the same Neurosity account as console.neurosity.co.
+      No developer key is required for your own Crown.
+    </p>
+    <form id="loginForm">
+      <label>
+        Email
+        <input type="email" id="email" autocomplete="username" required />
+      </label>
+      <label>
+        Password
+        <input type="password" id="password" autocomplete="current-password" required />
+      </label>
+      <label class="row">
+        <input type="checkbox" id="staySignedIn" checked />
+        Stay signed in
+      </label>
+      <button type="submit" id="loginBtn">Connect</button>
+      <p id="loginError" class="error" hidden></p>
+    </form>
+  </section>
+
+  <section id="deviceView" class="panel" hidden>
+    <h2>Select device</h2>
+    <p class="hint">Multiple Crowns are on this account. Pick one to stream.</p>
+    <div id="deviceList" class="device-list"></div>
+  </section>
+
+  <section id="streamView" class="stream-view" hidden>
+    <div id="timelineView">
+      <div class="chart-block">
+        <div class="chart-head">
+          <h2>Raw EEG</h2>
+          <span class="meta" id="rawMeta"></span>
+        </div>
+        <div id="rawChart" class="chart"></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-block">
+          <div class="chart-head"><h2>Delta</h2></div>
+          <div id="deltaChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Theta</h2></div>
+          <div id="thetaChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Alpha</h2></div>
+          <div id="alphaChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Beta</h2></div>
+          <div id="betaChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Gamma</h2></div>
+          <div id="gammaChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Focus / Calm</h2></div>
+          <div id="focusCalmChart" class="chart chart-sm"></div>
+        </div>
+      </div>
+
+      <div class="chart-grid two">
+        <div class="chart-block">
+          <div class="chart-head">
+            <h2>Signal quality</h2>
+            <span class="meta" id="sqLegend"></span>
+          </div>
+          <div id="signalQualityChart" class="chart chart-sm"></div>
+        </div>
+        <div class="chart-block">
+          <div class="chart-head"><h2>Accelerometer</h2></div>
+          <div id="accelChart" class="chart chart-sm"></div>
+        </div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-head"><h2>PSD spectrum</h2></div>
+        <div id="psdChart" class="chart"></div>
+      </div>
+    </div>
+
+    <div id="vizView" class="viz-view" hidden>
+      <div id="vizHost" class="viz-host"></div>
+    </div>
+  </section>
+
+  <script src="./vendor/uPlot.iife.min.js"></script>
+  <script type="module" src="./renderer.js"></script>
+</body>
+</html>

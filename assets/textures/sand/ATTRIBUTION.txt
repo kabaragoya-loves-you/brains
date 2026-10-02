@@ -1,0 +1,4 @@
+# Poly Haven — sand_01 (CC0 1.0)
+# https://polyhaven.com/a/sand_01
+# Author: Rob Tuytel
+# Maps: sand_diff.jpg, sand_nor.jpg (OpenGL normal), sand_rough.jpg
