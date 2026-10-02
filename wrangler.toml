@@ -1,3 +1,9 @@
 name = "brains"
 compatibility_date = "2026-01-01"
-pages_build_output_dir = "dist/web"
+
+# Static SPA for Workers Builds. Prefer Workers [assets] over Pages so the
+# auto-created Builds API token (Workers Scripts Edit) can deploy without
+# Cloudflare Pages permissions.
+[assets]
+directory = "./dist/web"
+not_found_handling = "single-page-application"

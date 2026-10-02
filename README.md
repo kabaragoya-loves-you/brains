@@ -39,7 +39,7 @@ Output lands in `dist/desktop/`:
 - `Brains! Setup *.exe` — NSIS installer
 - `Brains! *.exe` — portable executable
 
-## Web (Cloudflare Pages)
+## Web (Cloudflare)
 
 Build a static single-page app:
 
@@ -49,22 +49,20 @@ npm run build:web
 
 Artifacts are written to `dist/web/`. Use `npm run build:web:only` if you want the site without packaging the exe.
 
-### Cloudflare Pages settings
+### Cloudflare Workers Builds settings
+
+This repo deploys as a **Worker with static assets** (`wrangler.toml` `[assets]`), not via `wrangler pages deploy`. The auto-created Builds token has Workers permissions, not Pages.
 
 | Setting | Value |
 | --- | --- |
 | Build command | `npm run build:web` |
-| Build output directory | `dist/web` |
-| Node version | `20` (or newer) |
+| Deploy command | `npx wrangler deploy` |
+| Root directory | leave empty (repo root — **not** `dist/web`) |
+| API token | Create/select from **Settings → Builds → API token** (not Profile rename) |
 
-Push to the connected git branch to deploy. The site talks directly to Neurosity/Firebase from the browser; no server backend is required. Cloudflare sets `CF_PAGES`, so the Windows packaging step is skipped there.
+Do **not** add a custom `CLOUDFLARE_API_TOKEN` build secret unless you know you need it — it overrides the Builds token and often causes auth `10000` on deploy.
 
-Local preview after a web build:
-
-```bash
-npx --yes serve dist/web
-```
-
+Assets directory is `./dist/web` in `wrangler.toml`. Cloudflare sets `CF_PAGES`/`CI` so Windows exe packaging is skipped in CI.
 ## Scripts
 
 | Script | Purpose |
