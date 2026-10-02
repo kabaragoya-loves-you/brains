@@ -386,7 +386,9 @@ logoutBtn.addEventListener("click", async () => {
 
 function applyFullscreenUi(on: boolean): void {
   document.body.classList.toggle("is-fullscreen", on);
-  fsExitWrap.hidden = !on;
+  const web = document.documentElement.classList.contains("platform-web")
+    || document.body.classList.contains("platform-web");
+  fsExitWrap.hidden = web || !on;
   fullscreenBtn.textContent = on ? "Exit full" : "Full screen";
   requestAnimationFrame(() => viz?.resize());
 }

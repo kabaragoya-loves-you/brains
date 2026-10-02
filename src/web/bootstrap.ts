@@ -2,6 +2,9 @@ import { Neurosity } from "@neurosity/sdk";
 import type { AuthState, CrownApi, MetricMessage } from "../global.js";
 import { NeurosityClient } from "../../electron/neurosity-client.js";
 
+document.documentElement.classList.add("platform-web");
+document.body?.classList.add("platform-web");
+
 const CRED_KEY = "brains.credentials";
 
 type StoredCredentials = {

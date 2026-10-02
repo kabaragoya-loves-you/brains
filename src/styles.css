@@ -375,6 +375,12 @@ button:disabled {
   font-size: 0.78rem;
 }
 
+/* Browser fullscreen already has its own chrome; hide our Electron-style ×. */
+html.platform-web .fs-exit-wrap,
+body.platform-web .fs-exit-wrap {
+  display: none !important;
+}
+
 .fs-exit-wrap {
   position: fixed;
   top: 0;
